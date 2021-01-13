@@ -42,7 +42,7 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
     #endregion
 		
 		public DcGeneralDataContext() : 
-				base(global::UTTT.Ejemplo.Linq.Data.Properties.Settings.Default.ManualConnectionString1, mappingSource)
+				base(global::UTTT.Ejemplo.Linq.Data.Properties.Settings.Default.ManualConnectionString2, mappingSource)
 		{
 			OnCreated();
 		}
