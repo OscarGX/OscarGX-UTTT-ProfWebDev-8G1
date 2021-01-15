@@ -12,3 +12,7 @@
     background-color:Red;
     color:Yellow;
 }
+
+.error {
+    border-color: red;
+}
