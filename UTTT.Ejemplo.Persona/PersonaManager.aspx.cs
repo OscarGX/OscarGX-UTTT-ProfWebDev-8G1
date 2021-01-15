@@ -73,6 +73,9 @@ namespace UTTT.Ejemplo.Persona
                     {
                         this.lblAccion.Text = "Agregar";
                         this.dtFechaUI.Value = null;
+                        DateTime date = new DateTime(2000, 1, 9);
+                        this.dtFechaNacimiento.TodaysDate = date;
+                        this.dtFechaNacimiento.SelectedDate = date;
                     }
                     else
                     {
@@ -88,6 +91,11 @@ namespace UTTT.Ejemplo.Persona
                             this.dtFechaNacimiento.TodaysDate = (DateTime)fechaNacimiento;
                             this.dtFechaNacimiento.SelectedDate = (DateTime)fechaNacimiento;
                             this.dtFechaUI.Value = fechaNacimiento.ToString();
+                        } else
+                        {
+                            DateTime date = new DateTime(2000, 1, 9);
+                            this.dtFechaNacimiento.TodaysDate = date;
+                            // this.dtFechaNacimiento.SelectedDate = date;
                         }
                         this.setItem(ref this.ddlSexo, baseEntity.CatSexo.strValor);
                     }                

@@ -77,7 +77,7 @@ const numeroHermanos = () => {
 const validTemp = () => {
     const today = new Date();
     const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
-    const personDate = new Date(`${strDate[1]}/${strDate[0]}/${strDate[2]}`);
+    const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
     return ((ddlSexo.value > 0 && txtClaveUnica.value.length > 0 && txtNombre.value.length > 0 && txtAPaterno.value.length > 0
         && dtFechaNacimiento.value.length > 0) && (/^([0-9])*$/.test(txtClaveUnica.value) && txtClaveUnica.value.length === 3)
         && (txtNombre.value.length >= 3 && txtNombre.value.length <= 15) && (txtAPaterno.value.length >= 3 && txtAPaterno.value.length <= 15)
