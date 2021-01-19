@@ -86,6 +86,9 @@ namespace UTTT.Ejemplo.Persona
                         this.txtClaveUnica.Text = this.baseEntity.strClaveUnica;
                         this.txtNumHermanos.Text = this.baseEntity.intNumHermanos.ToString();
                         DateTime? fechaNacimiento = this.baseEntity.dtFechaNacimiento;
+                        this.txtEmail.Text = this.baseEntity.strEmail;
+                        this.txtCP.Text = this.baseEntity.intCP.ToString();
+                        this.txtRFC.Text = this.baseEntity.strRFC;
                         if (fechaNacimiento != null)
                         {
                             this.dtFechaNacimiento.TodaysDate = (DateTime)fechaNacimiento;
@@ -112,44 +115,58 @@ namespace UTTT.Ejemplo.Persona
 
         protected void btnAceptar_Click(object sender, EventArgs e)
         {
-            try
+            if (!IsValid)
             {
-                // ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "validate", "validate();", true);
-                DataContext dcGuardar = new DcGeneralDataContext();
-                UTTT.Ejemplo.Linq.Data.Entity.Persona persona = new Linq.Data.Entity.Persona();
-                if (this.idPersona == 0)
-                {
-                    persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
-                    persona.strNombre = this.txtNombre.Text.Trim();
-                    persona.strAMaterno = this.txtAMaterno.Text.Trim();
-                    persona.strAPaterno = this.txtAPaterno.Text.Trim();
-                    persona.idCatSexo = int.Parse(this.ddlSexo.Text);
-                    persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
-                    persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
-                    dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().InsertOnSubmit(persona);
-                    dcGuardar.SubmitChanges();
-                    this.showMessage("El registro se agrego correctamente.");
-                    this.Response.Redirect("~/PersonaPrincipal.aspx", false);
-                    
-                }
-                if (this.idPersona > 0)
-                {
-                    persona = dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().First(c => c.id == idPersona);
-                    persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
-                    persona.strNombre = this.txtNombre.Text.Trim();
-                    persona.strAMaterno = this.txtAMaterno.Text.Trim();
-                    persona.strAPaterno = this.txtAPaterno.Text.Trim();
-                    persona.idCatSexo = int.Parse(this.ddlSexo.Text);
-                    persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
-                    persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
-                    dcGuardar.SubmitChanges();
-                    this.showMessage("El registro se edito correctamente.");
-                    this.Response.Redirect("~/PersonaPrincipal.aspx", false);
-                }
-            }
-            catch (Exception _e)
+                this.showMessageException("Ups, parece que hay algunos errores en el formulario, por favor, intenta nuevamente.");
+                
+            } else
             {
-                this.showMessageException(_e.Message);
+                try
+                {
+                    // ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "validate", "validate();", true);
+                    DataContext dcGuardar = new DcGeneralDataContext();
+                    UTTT.Ejemplo.Linq.Data.Entity.Persona persona = new Linq.Data.Entity.Persona();
+                    if (this.idPersona == 0)
+                    {
+                        persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
+                        persona.strNombre = this.txtNombre.Text.Trim();
+                        persona.strAMaterno = this.txtAMaterno.Text.Trim();
+                        persona.strAPaterno = this.txtAPaterno.Text.Trim();
+                        persona.idCatSexo = int.Parse(this.ddlSexo.Text);
+                        persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
+                        persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
+                        persona.strEmail = this.txtEmail.Text.Trim();
+                        persona.intCP = int.Parse(this.txtCP.Text.Trim());
+                        persona.strRFC = this.txtRFC.Text.Trim();
+                        dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().InsertOnSubmit(persona);
+                        dcGuardar.SubmitChanges();
+                        this.showMessage("El registro se agrego correctamente.");
+                        this.Response.Redirect("~/PersonaPrincipal.aspx", false);
+
+                    }
+                    if (this.idPersona > 0)
+                    {
+                        persona = dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().First(c => c.id == idPersona);
+                        persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
+                        persona.strNombre = this.txtNombre.Text.Trim();
+                        persona.strAMaterno = this.txtAMaterno.Text.Trim();
+                        persona.strAPaterno = this.txtAPaterno.Text.Trim();
+                        persona.idCatSexo = int.Parse(this.ddlSexo.Text);
+                        persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
+                        persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
+                        persona.strEmail = this.txtEmail.Text.Trim();
+                        persona.intCP = int.Parse(this.txtCP.Text.Trim());
+                        persona.strRFC = this.txtRFC.Text.Trim();
+                        dcGuardar.SubmitChanges();
+                        this.showMessage("El registro se edito correctamente.");
+                        this.Response.Redirect("~/PersonaPrincipal.aspx", false);
+                    }
+                }
+                catch (Exception _e)
+                {
+                    this.showMessageException(_e.Message);
+
+                }
             }
         }
 
@@ -207,6 +224,18 @@ namespace UTTT.Ejemplo.Persona
         protected void dtFechaNacimiento_SelectionChanged(object sender, EventArgs e)
         {
             this.dtFechaUI.Value = this.dtFechaNacimiento.SelectedDate.ToString();
+        }
+
+        protected void CustomValidator1_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            int sexIndex = int.Parse(this.ddlSexo.SelectedValue);
+            if (sexIndex < 0)
+            {
+                args.IsValid = false;
+            } else
+            {
+                args.IsValid = true;
+            }
         }
     }
 }

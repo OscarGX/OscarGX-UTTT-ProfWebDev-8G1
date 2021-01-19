@@ -455,6 +455,12 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 		
 		private System.Nullable<int> _intNumHermanos;
 		
+		private string _strEmail;
+		
+		private System.Nullable<int> _intCP;
+		
+		private string _strRFC;
+		
 		private EntitySet<Direccion> _Direccion;
 		
 		private EntityRef<CatSexo> _CatSexo;
@@ -479,6 +485,12 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
     partial void OndtFechaNacimientoChanged();
     partial void OnintNumHermanosChanging(System.Nullable<int> value);
     partial void OnintNumHermanosChanged();
+    partial void OnstrEmailChanging(string value);
+    partial void OnstrEmailChanged();
+    partial void OnintCPChanging(System.Nullable<int> value);
+    partial void OnintCPChanged();
+    partial void OnstrRFCChanging(string value);
+    partial void OnstrRFCChanged();
     #endregion
 		
 		public Persona()
@@ -648,6 +660,66 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 					this._intNumHermanos = value;
 					this.SendPropertyChanged("intNumHermanos");
 					this.OnintNumHermanosChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strEmail", DbType="VarChar(100)")]
+		public string strEmail
+		{
+			get
+			{
+				return this._strEmail;
+			}
+			set
+			{
+				if ((this._strEmail != value))
+				{
+					this.OnstrEmailChanging(value);
+					this.SendPropertyChanging();
+					this._strEmail = value;
+					this.SendPropertyChanged("strEmail");
+					this.OnstrEmailChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_intCP", DbType="Int")]
+		public System.Nullable<int> intCP
+		{
+			get
+			{
+				return this._intCP;
+			}
+			set
+			{
+				if ((this._intCP != value))
+				{
+					this.OnintCPChanging(value);
+					this.SendPropertyChanging();
+					this._intCP = value;
+					this.SendPropertyChanged("intCP");
+					this.OnintCPChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strRFC", DbType="VarChar(13)")]
+		public string strRFC
+		{
+			get
+			{
+				return this._strRFC;
+			}
+			set
+			{
+				if ((this._strRFC != value))
+				{
+					this.OnstrRFCChanging(value);
+					this.SendPropertyChanging();
+					this._strRFC = value;
+					this.SendPropertyChanged("strRFC");
+					this.OnstrRFCChanged();
 				}
 			}
 		}
