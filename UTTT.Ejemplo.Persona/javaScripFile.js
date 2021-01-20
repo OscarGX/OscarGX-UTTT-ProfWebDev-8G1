@@ -12,6 +12,7 @@ const lblAction = document.querySelector('#lblAccion');
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const rfcRegex = /^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$/;
 let isValid = false;
+let erroresArray = [];
 // let touched = false;
 
 function myFunction() {
@@ -19,17 +20,24 @@ function myFunction() {
 }
 
 function validate() {
-    // return true;
-    /*if (lblAction.textContent.trim().includes('Editar') && !touched) {
+    /* if (validTemp()) {
+        return true;
+    } */
+    // alert('No se puede registrar porque los datos son incorrectos.');
+    if (validateForm()) {
         return true;
     }
-    if (isValid && Number.parseInt(ddlSexo.value) > 0 && validDate()) {
-        return true;
-    }*/
-    if (validTemp()) {
-        return true;
+    if (erroresArray.length > 0) {
+        let erroresStr = '';
+        erroresArray.forEach((errorObj, index) => {
+            erroresStr += `
+                Hay errores en el formulario!
+                Error ${index + 1}: ${errorObj.message}
+                Campo: ${errorObj.field}
+            `;
+        });
+        errores.innerText = erroresStr;
     }
-    alert('No se puede registrar porque los datos son incorrectos.');
     return false;
 }
 
@@ -37,7 +45,9 @@ function validate() {
 const validTemp = () => {
     const today = new Date();
     const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
+    // development
     // const personDate = new Date(`${strDate[1]}/${strDate[0]}/${strDate[2]}`);
+    // end
     const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
     const validEmail = emailRegex.test(txtEmail.value.toLowerCase());
     const validCP = /^([0-9])*$/.test(txtCP.value) && txtCP.value.length === 5;
@@ -47,6 +57,122 @@ const validTemp = () => {
         && (txtNombre.value.length >= 3 && txtNombre.value.length <= 15) && (txtAPaterno.value.length >= 3 && txtAPaterno.value.length <= 15)
         && (/^([0-9])*$/.test(txtNumHermanos.value) && Number.parseInt(txtNumHermanos.value) >= 0) && ((today.getFullYear() - personDate.getFullYear()) >= 18))
         && validEmail && validCP && validRFC;
+}
+
+const validateForm = () => {
+    erroresArray = [];
+    const today = new Date();
+    const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
+    // dev enviroment
+    // const personDate = new Date(`${strDate[1]}/${strDate[0]}/${strDate[2]}`);
+    // end dev-e
+    const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
+    if (Number.parseInt(ddlSexo.value) < 0) {
+        erroresArray.push({
+            field: 'Sexo',
+            message: 'El campo sexo es requerido.'
+        });
+        return false;
+    }
+    if (txtClaveUnica.value.length === 0) {
+        erroresArray.push({
+            field: 'Clave Única',
+            message: 'El campo clave única es requerido.'
+        });
+        return false;
+    }
+    if (txtNombre.value.length === 0) {
+        erroresArray.push({
+            field: 'Nombre',
+            message: 'El campo nombre es requerido.'
+        });
+        return false;
+    }
+    if (txtAPaterno.value.length === 0) {
+        erroresArray.push({
+            field: 'Apellido Paterno',
+            message: 'El campo apellido paterno es requerido.'
+        });
+        return false;
+    }
+    if (dtFechaNacimiento.value.length === 0) {
+        erroresArray.push({
+            field: 'Fecha de nacimiento',
+            message: 'La fecha de nacimiento es requerida.'
+        });
+        return false;
+    }
+    if (!(/^([0-9])*$/.test(txtClaveUnica.value)) && txtClaveUnica.value.length > 0) {
+        erroresArray.push({
+            field: 'Clave Única',
+            message: 'La clave única debe ser un número'
+        });
+        return false;
+    }
+    if (txtClaveUnica.value.length !== 3) {
+        erroresArray.push({
+            field: 'Clave Única',
+            message: 'La clave única debe tener una longitud de 3 caracteres.'
+        });
+        return false;
+    }
+    if (txtNombre.value.length <= 2 && txtNombre.value.length >= 16) {
+        erroresArray.push({
+            field: 'Nombre',
+            message: 'El campo nombre debe tener una longitud entre 3 y 15 caracteres.'
+        });
+        return false;
+    }
+    if (txtAPaterno.value.length <= 2 && txtAPaterno.value.length >= 16) {
+        erroresArray.push({
+            field: 'A',
+            message: 'El campo nombre debe tener una longitud entre 3 y 15 caracteres.'
+        });
+        return false;
+    }
+    if (!(/^([0-9])*$/.test(txtNumHermanos.value.length > 0 ? txtNumHermanos.value : 'abcd'))) {
+        erroresArray.push({
+            field: 'Numero de Hermanos',
+            message: 'El campo número de hermanos debe ser numérico.'
+        });
+        return false;
+    }
+    if (today.getFullYear() - personDate.getFullYear() < 18) {
+        erroresArray.push({
+            field: 'Fecha de Nacimiento',
+            message: 'Debes er mayor de edad para acceder al sistema.'
+        });
+        return false;
+    }
+    if (!emailRegex.test(txtEmail.value.toLowerCase())) {
+        erroresArray.push({
+            field: 'Email',
+            message: 'El campo email no es válido.'
+        });
+        return false;
+    }
+    if (!(/^([0-9])*$/.test(txtCP.value.length > 0 ? txtCP.value : 'abcd'))) {
+        erroresArray.push({
+            field: 'Código Postal',
+            message: 'El campo código postal debe ser número'
+        });
+        return false;
+    }
+    if (txtCP.value.length !== 5) {
+        erroresArray.push({
+            field: 'Código Postal',
+            message: 'El campo código postal debe tener una longitud de 5 caracteres.'
+        });
+        return false;
+    }
+    if (!rfcRegex.test(txtRFC.value)) {
+        erroresArray.push({
+            field: 'RFC',
+            message: 'El formato del RFC no es válido.'
+        });
+        return false;
+    }
+    return true;
 }
 
 /* const validDate = () => {
