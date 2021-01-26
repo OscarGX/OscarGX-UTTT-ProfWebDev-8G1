@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Collections;
 using UTTT.Ejemplo.Persona.Control;
 using UTTT.Ejemplo.Persona.Control.Ctrl;
+using System.Text.RegularExpressions;
 
 #endregion
 
@@ -27,7 +28,8 @@ namespace UTTT.Ejemplo.Persona
         private DataContext dcGlobal = new DcGeneralDataContext();
         private int tipoAccion = 0;
         public DateTime dt = DateTime.Now;
-
+        private Regex emailRegex = new Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+        private Regex rfcRegex = new Regex(@"^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$");
         #endregion
 
         #region Eventos
@@ -94,14 +96,15 @@ namespace UTTT.Ejemplo.Persona
                             this.dtFechaNacimiento.TodaysDate = (DateTime)fechaNacimiento;
                             this.dtFechaNacimiento.SelectedDate = (DateTime)fechaNacimiento;
                             this.dtFechaUI.Value = fechaNacimiento.ToString();
-                        } else
+                        }
+                        else
                         {
                             DateTime date = new DateTime(2000, 1, 9);
                             this.dtFechaNacimiento.TodaysDate = date;
                             // this.dtFechaNacimiento.SelectedDate = date;
                         }
                         this.setItem(ref this.ddlSexo, baseEntity.CatSexo.strValor);
-                    }                
+                    }
                 }
 
             }
@@ -117,63 +120,108 @@ namespace UTTT.Ejemplo.Persona
         {
             if (!IsValid)
             {
-                this.showMessageException("Ups, parece que hay algunos errores en el formulario, por favor, intenta nuevamente.");
-                
-            } else
+                // this.showMessageException("Ups, parece que hay algunos errores en el formulario, por favor, intenta nuevamente.");
+                return;
+            }
+            try
             {
-                try
+                // throw new Exception("Excepción de prueba para correo.");
+                // ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "validate", "validate();", true);
+                DataContext dcGuardar = new DcGeneralDataContext();
+                UTTT.Ejemplo.Linq.Data.Entity.Persona persona = new Linq.Data.Entity.Persona();
+                int i = 0;
+                if (this.idPersona == 0)
                 {
-                    // ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "validate", "validate();", true);
-                    DataContext dcGuardar = new DcGeneralDataContext();
-                    UTTT.Ejemplo.Linq.Data.Entity.Persona persona = new Linq.Data.Entity.Persona();
-                    if (this.idPersona == 0)
+                    persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
+                    persona.strNombre = this.txtNombre.Text.Trim();
+                    persona.strAMaterno = this.txtAMaterno.Text.Trim();
+                    persona.strAPaterno = this.txtAPaterno.Text.Trim();
+                    persona.idCatSexo = int.Parse(this.ddlSexo.Text);
+                    persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
+                    persona.intNumHermanos = this.txtNumHermanos.Text.Trim().Length > 0 ? (int.TryParse(this.txtNumHermanos.Text.Trim(), out i) ? int.Parse(this.txtNumHermanos.Text.Trim()) : 0) : 0;
+                    persona.strEmail = this.txtEmail.Text.Trim();
+                    persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
+                    persona.strRFC = this.txtRFC.Text.Trim();
+                    String mensaje = String.Empty;
+                    if (!this.validacion(persona, ref mensaje))
                     {
-                        persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
-                        persona.strNombre = this.txtNombre.Text.Trim();
-                        persona.strAMaterno = this.txtAMaterno.Text.Trim();
-                        persona.strAPaterno = this.txtAPaterno.Text.Trim();
-                        persona.idCatSexo = int.Parse(this.ddlSexo.Text);
-                        persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
-                        persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
-                        persona.strEmail = this.txtEmail.Text.Trim();
-                        persona.intCP = int.Parse(this.txtCP.Text.Trim());
-                        persona.strRFC = this.txtRFC.Text.Trim();
-                        dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().InsertOnSubmit(persona);
-                        dcGuardar.SubmitChanges();
-                        this.showMessage("El registro se agrego correctamente.");
-                        this.Response.Redirect("~/PersonaPrincipal.aspx", false);
-
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
                     }
-                    if (this.idPersona > 0)
+                    if (!this.sqlInjectionValida(ref mensaje))
                     {
-                        persona = dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().First(c => c.id == idPersona);
-                        persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
-                        persona.strNombre = this.txtNombre.Text.Trim();
-                        persona.strAMaterno = this.txtAMaterno.Text.Trim();
-                        persona.strAPaterno = this.txtAPaterno.Text.Trim();
-                        persona.idCatSexo = int.Parse(this.ddlSexo.Text);
-                        persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
-                        persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
-                        persona.strEmail = this.txtEmail.Text.Trim();
-                        persona.intCP = int.Parse(this.txtCP.Text.Trim());
-                        persona.strRFC = this.txtRFC.Text.Trim();
-                        dcGuardar.SubmitChanges();
-                        this.showMessage("El registro se edito correctamente.");
-                        this.Response.Redirect("~/PersonaPrincipal.aspx", false);
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
                     }
-                }
-                catch (Exception _e)
-                {
-                    this.showMessageException(_e.Message);
+                    if (!this.htmlInjectionValida(ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
+                    dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().InsertOnSubmit(persona);
+                    dcGuardar.SubmitChanges();
+                    this.showMessage("El registro se agrego correctamente.");
+                    this.Response.Redirect("~/PersonaPrincipal.aspx", false);
 
                 }
+                if (this.idPersona > 0)
+                {
+                    persona = dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().First(c => c.id == idPersona);
+                    persona.strClaveUnica = this.txtClaveUnica.Text.Trim();
+                    persona.strNombre = this.txtNombre.Text.Trim();
+                    persona.strAMaterno = this.txtAMaterno.Text.Trim();
+                    persona.strAPaterno = this.txtAPaterno.Text.Trim();
+                    persona.idCatSexo = int.Parse(this.ddlSexo.Text);
+                    persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
+                    persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
+                    persona.strEmail = this.txtEmail.Text.Trim();
+                    persona.intCP = int.Parse(this.txtCP.Text.Trim());
+                    persona.strRFC = this.txtRFC.Text.Trim();
+                    String mensaje = String.Empty;
+                    if (!this.validacion(persona, ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
+                    if (!this.sqlInjectionValida(ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
+                    if (!this.htmlInjectionValida(ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
+                    dcGuardar.SubmitChanges();
+                    this.showMessage("El registro se edito correctamente.");
+                    this.Response.Redirect("~/PersonaPrincipal.aspx", false);
+                }
+            }
+            catch (Exception _e)
+            {
+                CtrlEmail email = new CtrlEmail();
+                //String messageException = _e.Message;
+                //String archivo = "PersonaManager.aspx.cs";
+                //String at = DateTime.Now.ToString();
+                //String customMessage = String.Format("Ocurrió una excepción en el sistema. {0} Mensaje de la excepción: {1}{0} " +
+                //    "En el archivo: {2}{0} Fecha y Hora: {3}", Environment.NewLine, messageException, archivo, at);
+                email.sendEmail(_e.Message, "PersonaManager.aspx.cs", "En el método btnAceptar_Click", _e.GetType().ToString());
+                this.Response.Redirect("~/ErrorPages/ErrorPage.html", false);
+                // this.showMessageException(_e.Message);
             }
         }
 
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             try
-            {              
+            {
                 this.Response.Redirect("~/PersonaPrincipal.aspx", false);
             }
             catch (Exception _e)
@@ -190,7 +238,7 @@ namespace UTTT.Ejemplo.Persona
                 Expression<Func<CatSexo, bool>> predicateSexo = c => c.id == idSexo;
                 predicateSexo.Compile();
                 List<CatSexo> lista = dcGlobal.GetTable<CatSexo>().Where(predicateSexo).ToList();
-                CatSexo catTemp = new CatSexo();            
+                CatSexo catTemp = new CatSexo();
                 this.ddlSexo.DataTextField = "strValor";
                 this.ddlSexo.DataValueField = "id";
                 this.ddlSexo.DataSource = lista;
@@ -221,6 +269,186 @@ namespace UTTT.Ejemplo.Persona
 
         #endregion
 
+        #region MetodosValidaciones
+        /// <summary>
+        /// Validación datos
+        /// </summary>
+        /// <param name="_persona"></param>
+        /// <param name="_mensaje"></param>
+        /// <returns></returns>
+
+        public bool validacion(UTTT.Ejemplo.Linq.Data.Entity.Persona _persona, ref String _mensaje)
+        {
+            int i = 0;
+            if (_persona.idCatSexo < 0)
+            {
+                _mensaje = "El campo sexo es requerido";
+                return false;
+            }
+            if (_persona.strClaveUnica.Equals(String.Empty))
+            {
+                _mensaje = "El campo clave única es requerido";
+                return false;
+            }
+            if (!int.TryParse(_persona.strClaveUnica, out i))
+            {
+                _mensaje = "La clave única debe ser un número";
+                return false;
+            }
+            if (int.Parse(_persona.strClaveUnica) < 100 || int.Parse(_persona.strClaveUnica) > 999)
+            {
+                _mensaje = "La clave única está fuera de rango.";
+                return false;
+            }
+            if (_persona.strClaveUnica.Length > 3 || _persona.strClaveUnica.Length < 3)
+            {
+                _mensaje = "La clave única debe tener 3 caracteres de longitud";
+                return false;
+            }
+            if (_persona.strNombre.Equals(String.Empty))
+            {
+                _mensaje = "El nombre está vacío";
+                return false;
+            }
+            if (_persona.strNombre.Length > 50)
+            {
+                _mensaje = "La longitud de caracteres del campo nombre rebasa lo permitido.";
+                return false;
+            }
+            if (_persona.strAPaterno.Equals(String.Empty))
+            {
+                _mensaje = "El campo apellido paterno está vacío";
+                return false;
+            }
+            if (_persona.strAPaterno.Length > 50)
+            {
+                _mensaje = "La longitud de caracteres del campo apellido paterno rebasa lo permitido.";
+                return false;
+            }
+            if (!emailRegex.IsMatch(_persona.strEmail))
+            {
+                _mensaje = "El correo electrónico no es válido";
+                return false;
+            }
+            if (_persona.intCP.ToString().Length != 5)
+            {
+                _mensaje = "El código postal debe tener una longitud de 5 caracteres";
+                return false;
+            }
+            if (!this.rfcRegex.IsMatch(_persona.strRFC))
+            {
+                _mensaje = "El formato del campo RFC no es válido";
+                return false;
+            }
+            if (_persona.dtFechaNacimiento.Equals(String.Empty))
+            {
+                _mensaje = "El campo fecha de nacimiento es requerido";
+                return false;
+            }
+            var time = DateTime.Now - _persona.dtFechaNacimiento.Value.Date;
+            if (time.Days < 6570)
+            {
+                _mensaje = "Debes ser mayor de 18 años";
+                return false;
+            }
+            return true;
+        }
+
+        public bool sqlInjectionValida (ref String _mensaje)
+        {
+            CtrlValidaInjection valida = new CtrlValidaInjection();
+            String _mensajeFuncion = String.Empty;
+            if (valida.sqlInjectionValida(this.txtClaveUnica.Text.Trim(), ref _mensajeFuncion, "Clave Única", ref this.txtClaveUnica))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(txtNombre.Text.Trim(), ref _mensajeFuncion, "Nombre", ref this.txtNombre))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtAPaterno.Text.Trim(), ref _mensajeFuncion, "Apellido Paterno", ref this.txtAPaterno))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtAMaterno.Text.Trim(), ref _mensajeFuncion, "Apellido Materno", ref this.txtAMaterno))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtNumHermanos.Text.Trim(), ref _mensajeFuncion, "Numero de hermanos", ref this.txtNumHermanos))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtEmail.Text.Trim(), ref _mensajeFuncion, "Email", ref this.txtEmail))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtCP.Text.Trim(), ref _mensajeFuncion, "Código Postal", ref this.txtCP))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            if (valida.sqlInjectionValida(this.txtRFC.Text.Trim(), ref _mensajeFuncion, "RFC", ref this.txtRFC))
+            {
+                _mensaje = _mensajeFuncion;
+                return false;
+            }
+            return true;
+        }
+
+        public bool htmlInjectionValida (ref String _mensaje)
+        {
+            CtrlValidaInjection valida = new CtrlValidaInjection();
+            String mensajeFuncion = String.Empty;
+            if (valida.htmlInjectionValida(this.txtClaveUnica.Text.Trim(), ref mensajeFuncion, "Clave Única", ref this.txtClaveUnica))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtNombre.Text.Trim(), ref mensajeFuncion, "Nombre", ref this.txtNombre))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtAPaterno.Text.Trim(), ref mensajeFuncion, "Apellido Paterno", ref this.txtAPaterno))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtAMaterno.Text.Trim(), ref mensajeFuncion, "Apellido Materno", ref this.txtAMaterno))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtNumHermanos.Text.Trim(), ref mensajeFuncion, "Número de Hermanos", ref this.txtNumHermanos))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtEmail.Text.Trim(), ref mensajeFuncion, "Email", ref this.txtEmail))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtCP.Text.Trim(), ref mensajeFuncion, "Código postal", ref this.txtCP))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            if (valida.htmlInjectionValida(this.txtRFC.Text.Trim(), ref mensajeFuncion, "RFC", ref this.txtRFC))
+            {
+                _mensaje = mensajeFuncion;
+                return false;
+            }
+            return true;
+        }
+
+        #endregion
         protected void dtFechaNacimiento_SelectionChanged(object sender, EventArgs e)
         {
             this.dtFechaUI.Value = this.dtFechaNacimiento.SelectedDate.ToString();
@@ -229,13 +457,8 @@ namespace UTTT.Ejemplo.Persona
         protected void CustomValidator1_ServerValidate(object source, ServerValidateEventArgs args)
         {
             int sexIndex = int.Parse(this.ddlSexo.SelectedValue);
-            if (sexIndex < 0)
-            {
-                args.IsValid = false;
-            } else
-            {
-                args.IsValid = true;
-            }
+            args.IsValid = sexIndex > 0;
         }
+
     }
 }

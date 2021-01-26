@@ -20,10 +20,6 @@ function myFunction() {
 }
 
 function validate() {
-    /* if (validTemp()) {
-        return true;
-    } */
-    // alert('No se puede registrar porque los datos son incorrectos.');
     if (validateForm()) {
         return true;
     }
