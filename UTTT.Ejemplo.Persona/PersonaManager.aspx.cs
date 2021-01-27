@@ -176,9 +176,9 @@ namespace UTTT.Ejemplo.Persona
                     persona.strAPaterno = this.txtAPaterno.Text.Trim();
                     persona.idCatSexo = int.Parse(this.ddlSexo.Text);
                     persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
-                    persona.intNumHermanos = int.Parse(this.txtNumHermanos.Text.Trim());
+                    persona.intNumHermanos = this.txtNumHermanos.Text.Trim().Length > 0 ? (int.TryParse(this.txtNumHermanos.Text.Trim(), out i) ? int.Parse(this.txtNumHermanos.Text.Trim()) : 0) : 0;
                     persona.strEmail = this.txtEmail.Text.Trim();
-                    persona.intCP = int.Parse(this.txtCP.Text.Trim());
+                    persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
                     persona.strRFC = this.txtRFC.Text.Trim();
                     String mensaje = String.Empty;
                     if (!this.validacion(persona, ref mensaje))
@@ -325,9 +325,24 @@ namespace UTTT.Ejemplo.Persona
                 _mensaje = "La longitud de caracteres del campo apellido paterno rebasa lo permitido.";
                 return false;
             }
+            if (_persona.strAMaterno.Length > 50)
+            {
+                _mensaje = "La longitud de caracteres del campo apellido materno rebasa lo permitido.";
+                return false;
+            }
+            if (_persona.intNumHermanos.ToString().Length > 2)
+            {
+                _mensaje = "La longitud de caracteres del campo número de hermanos sobrepasa lo permitido";
+                return false;
+            }
             if (!emailRegex.IsMatch(_persona.strEmail))
             {
                 _mensaje = "El correo electrónico no es válido";
+                return false;
+            }
+            if (_persona.strEmail.Length > 100)
+            {
+                _mensaje = "El correo electrónico rebasa la longitud de caracteres permitida.";
                 return false;
             }
             if (_persona.intCP.ToString().Length != 5)
@@ -338,6 +353,11 @@ namespace UTTT.Ejemplo.Persona
             if (!this.rfcRegex.IsMatch(_persona.strRFC))
             {
                 _mensaje = "El formato del campo RFC no es válido";
+                return false;
+            }
+            if (_persona.strRFC.Length > 13)
+            {
+                _mensaje = "La longitud de caracteres para el campo RFC sobrepasa lo permitido.";
                 return false;
             }
             if (_persona.dtFechaNacimiento.Equals(String.Empty))
@@ -460,5 +480,9 @@ namespace UTTT.Ejemplo.Persona
             args.IsValid = sexIndex > 0;
         }
 
+        protected void CustomValidator2_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = this.txtCP.Text.Trim().Length == 5;
+        }
     }
 }
