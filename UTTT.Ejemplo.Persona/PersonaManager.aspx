@@ -13,9 +13,21 @@
         input:focus {
             outline: none;
         }
+        .visible {
+            display: none !important;
+        }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"/>
 </head>
 <body>
+    <div class="container-fluid bg-dark">
+        <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Oscar Reyes</a>
+        </div>
+    </nav>
+    </div>
+    <div class="container-fluid">
     <form id="form1" runat="server">
     <div style="font-family: Arial; font-size: medium; font-weight: bold">
     
@@ -32,8 +44,14 @@
         <div>
 
         </div>
-        <div id="errores" style="text-align: center; color: red;">
-            
+        <div id="errores" class="mt-2" style="text-align: center; color: red;">
+            <div class="row justify-content-md-center visible">
+                <div class="col-md-5">
+                    <div class="alert alert-danger" role="alert">
+                        
+                    </div>
+                </div>
+            </div>
         </div>
             <div>
 
@@ -114,7 +132,7 @@
                     <TodayDayStyle BackColor="#999999" ForeColor="White" />
                 </asp:Calendar>
                 <asp:HiddenField ID="dtFechaUI" runat="server" />
-                <div>
+                <div class="mb-2 mt-2">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <asp:Label ID="lblErrorM3V" runat="server" ForeColor="Red" Visible="False"></asp:Label>
                 </div>
@@ -124,16 +142,24 @@
     <div>
      
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:Button ID="btnAceptar" runat="server" Text="Aceptar" 
-            onclick="btnAceptar_Click" ViewStateMode="Disabled" OnClientClick="return validate();" ValidationGroup="validForm" />
+            onclick="btnAceptar_Click" CssClass="btn btn-success" ViewStateMode="Disabled" OnClientClick="return validate();" ValidationGroup="validForm" />
         &nbsp;
         &nbsp;&nbsp;&nbsp;
         <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" 
-            onclick="btnCancelar_Click" ViewStateMode="Disabled" />
+            onclick="btnCancelar_Click" CssClass="btn btn-secondary" ViewStateMode="Disabled" />
     
     </div>
         <p>
             &nbsp;</p>
     </form>
+        </div>
+    <div class="container-fluid mt-3">
+        <div class="row justify-content-md-center bg-dark">
+            <div class="col-md-10 bg-dark">
+                <p class="text-center text-white">Ingeniería en Desarrollo y Gestión de Software - 8IDGS-G1</p>
+            </div>
+        </div>
+    </div>
     <script src="javaScripFile.js" type="text/javascript"></script>
 </body>
 </html>

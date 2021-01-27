@@ -3,7 +3,8 @@ const ddlSexo = document.querySelector('#ddlSexo');
 const txtNombre = document.querySelector('#txtNombre');
 const txtAPaterno = document.querySelector('#txtAPaterno');
 const dtFechaNacimiento = document.querySelector('#dtFechaUI');
-const errores = document.querySelector('#errores');
+const errores = document.querySelector('.alert-danger');
+const erroresParent = document.querySelector('#errores').firstElementChild;
 const txtNumHermanos = document.querySelector('#txtNumHermanos');
 const txtEmail = document.querySelector('#txtEmail');
 const txtCP = document.querySelector('#txtCP');
@@ -19,6 +20,14 @@ function myFunction() {
     document.getElementById("demo").innerHTML = "My First JavaScript Function";
 }
 
+const closeAlert = (fromBtnAgregar = true) => {
+    if (fromBtnAgregar) {
+        erroresParent.classList.remove('visible');
+    } else {
+        erroresParent.classList.add('visible');
+    }
+}
+
 function validate() {
     if (validateForm()) {
         return true;
@@ -27,12 +36,12 @@ function validate() {
         let erroresStr = '';
         erroresArray.forEach((errorObj, index) => {
             erroresStr += `
-                Hay errores en el formulario!
-                Error ${index + 1}: ${errorObj.message}
-                Campo: ${errorObj.field}
+                <strong>Hay errores en el formulario!<br>Error ${index + 1}:</strong><u> ${errorObj.message}</u><br><strong>Campo:</strong> <u>${errorObj.field}</u>
+                <br><button type="button" class="btn btn-link" onClick="closeAlert(false)">Cerrar</button>
             `;
         });
-        errores.innerText = erroresStr;
+        errores.innerHTML = erroresStr;
+        closeAlert();
     }
     return false;
 }
