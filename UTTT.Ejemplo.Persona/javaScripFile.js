@@ -12,6 +12,8 @@ const txtRFC = document.querySelector('#txtRFC');
 const lblAction = document.querySelector('#lblAccion');
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const rfcRegex = /^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$/;
+const onlyStringsRegex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/;
+const spaceRegex = /\s\s+/;
 let isValid = false;
 let erroresArray = [];
 // let touched = false;
@@ -86,27 +88,6 @@ const validateForm = () => {
         });
         return false;
     }
-    if (txtNombre.value.length === 0) {
-        erroresArray.push({
-            field: 'Nombre',
-            message: 'El campo nombre es requerido.'
-        });
-        return false;
-    }
-    if (txtAPaterno.value.length === 0) {
-        erroresArray.push({
-            field: 'Apellido Paterno',
-            message: 'El campo apellido paterno es requerido.'
-        });
-        return false;
-    }
-    if (dtFechaNacimiento.value.length === 0) {
-        erroresArray.push({
-            field: 'Fecha de nacimiento',
-            message: 'La fecha de nacimiento es requerida.'
-        });
-        return false;
-    }
     if (!(/^([0-9])*$/.test(txtClaveUnica.value)) && txtClaveUnica.value.length > 0) {
         erroresArray.push({
             field: 'Clave Única',
@@ -121,24 +102,94 @@ const validateForm = () => {
         });
         return false;
     }
-    if (txtNombre.value.length <= 2 && txtNombre.value.length >= 16) {
+    if (txtNombre.value.trim().length === 0) {
         erroresArray.push({
             field: 'Nombre',
-            message: 'El campo nombre debe tener una longitud entre 3 y 15 caracteres.'
+            message: 'El campo nombre es requerido.'
         });
         return false;
     }
-    if (txtAPaterno.value.length <= 2 && txtAPaterno.value.length >= 16) {
+    if (txtNombre.value.trim().length < 3 || txtNombre.value.trim().length > 50) {
         erroresArray.push({
-            field: 'A',
-            message: 'El campo nombre debe tener una longitud entre 3 y 15 caracteres.'
+            field: 'Nombre',
+            message: 'El campo nombre debe tener una longitud entre 3 y 50 caracteres.'
+        });
+        return false;
+    }
+    if (spaceRegex.test(txtNombre.value)) {
+        erroresArray.push({
+            field: 'Nombre',
+            message: 'Hay demasiados espacios en el campo nombre.'
+        });
+        return false;
+    }
+    if (!onlyStringsRegex.test(txtNombre.value)) {
+        erroresArray.push({
+            field: 'Nombre',
+            message: 'Solo se aceptan letras en el campo nombre.'
+        });
+        return false;
+    }
+    if (txtAPaterno.value.length === 0) {
+        erroresArray.push({
+            field: 'Apellido Paterno',
+            message: 'El campo apellido paterno es requerido.'
+        });
+        return false;
+    }
+    if (txtAPaterno.value.length < 3 || txtAPaterno.value.length > 50) {
+        erroresArray.push({
+            field: 'Apellido Paterno',
+            message: 'El campo apellido paterno debe tener una longitud entre 3 y 15 caracteres.'
+        });
+        return false;
+    }
+    if (spaceRegex.test(txtAPaterno.value)) {
+        erroresArray.push({
+            field: 'Apellido Paterno',
+            message: 'Hay demasiados espacios en el campo apellido paterno'
+        });
+        return false;
+    }
+    if (!onlyStringsRegex.test(txtAPaterno.value)) {
+        erroresArray.push({
+            field: 'Apellido Paterno',
+            message: 'Solo se aceptan letras en el campo apellido paterno.'
+        });
+        return false;
+    }
+    if (spaceRegex.test(txtAMaterno.value)) {
+        erroresArray.push({
+            field: 'Apellido Materno',
+            message: 'Hay demasiados espacios en el campo apellido materno'
+        });
+        return false;
+    }
+    if (!onlyStringsRegex.test(txtAMaterno.value) && txtAMaterno.value.trim().length > 0) {
+        erroresArray.push({
+            field: 'Apellido Materno',
+            message: 'Solo se aceptan letras en el campo apellido materno.'
+        });
+        return false;
+    }
+    if (dtFechaNacimiento.value.length === 0) {
+        erroresArray.push({
+            field: 'Fecha de nacimiento',
+            message: 'La fecha de nacimiento es requerida.'
         });
         return false;
     }
     if (!(/^([0-9])*$/.test(txtNumHermanos.value.length > 0 ? txtNumHermanos.value : 'abcd'))) {
         erroresArray.push({
-            field: 'Numero de Hermanos',
+            field: 'Número de Hermanos',
             message: 'El campo número de hermanos debe ser numérico.'
+        });
+        return false;
+    }
+    if (txtNumHermanos.value.length > 1 && txtNumHermanos.value[0] === "0") {
+        erroresArray.push({
+            field: 'Número de Hermanos',
+            message: 'Por favor ingresa un número entre 0 y 30.'
         });
         return false;
     }

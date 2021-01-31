@@ -457,7 +457,7 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 		
 		private string _strEmail;
 		
-		private System.Nullable<int> _intCP;
+		private string _strCP;
 		
 		private string _strRFC;
 		
@@ -487,8 +487,8 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
     partial void OnintNumHermanosChanged();
     partial void OnstrEmailChanging(string value);
     partial void OnstrEmailChanged();
-    partial void OnintCPChanging(System.Nullable<int> value);
-    partial void OnintCPChanged();
+    partial void OnstrCPChanging(string value);
+    partial void OnstrCPChanged();
     partial void OnstrRFCChanging(string value);
     partial void OnstrRFCChanged();
     #endregion
@@ -684,22 +684,22 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_intCP", DbType="Int")]
-		public System.Nullable<int> intCP
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strCP", DbType="VarChar(5)")]
+		public string strCP
 		{
 			get
 			{
-				return this._intCP;
+				return this._strCP;
 			}
 			set
 			{
-				if ((this._intCP != value))
+				if ((this._strCP != value))
 				{
-					this.OnintCPChanging(value);
+					this.OnstrCPChanging(value);
 					this.SendPropertyChanging();
-					this._intCP = value;
-					this.SendPropertyChanged("intCP");
-					this.OnintCPChanged();
+					this._strCP = value;
+					this.SendPropertyChanged("strCP");
+					this.OnstrCPChanged();
 				}
 			}
 		}

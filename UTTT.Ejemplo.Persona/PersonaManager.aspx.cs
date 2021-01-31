@@ -28,8 +28,10 @@ namespace UTTT.Ejemplo.Persona
         private DataContext dcGlobal = new DcGeneralDataContext();
         private int tipoAccion = 0;
         public DateTime dt = DateTime.Now;
-        private Regex emailRegex = new Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
-        private Regex rfcRegex = new Regex(@"^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$");
+        private readonly Regex emailRegex = new Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+        private readonly Regex rfcRegex = new Regex(@"^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$");
+        private readonly Regex onlyLetters = new Regex(@"^[a-zA-ZÀ-ÿ\u00f1\u00d1]+$");
+        
         #endregion
 
         #region Eventos
@@ -89,7 +91,7 @@ namespace UTTT.Ejemplo.Persona
                         this.txtNumHermanos.Text = this.baseEntity.intNumHermanos.ToString();
                         DateTime? fechaNacimiento = this.baseEntity.dtFechaNacimiento;
                         this.txtEmail.Text = this.baseEntity.strEmail;
-                        this.txtCP.Text = this.baseEntity.intCP.ToString();
+                        this.txtCP.Text = this.baseEntity.strCP;
                         this.txtRFC.Text = this.baseEntity.strRFC;
                         if (fechaNacimiento != null)
                         {
@@ -140,7 +142,8 @@ namespace UTTT.Ejemplo.Persona
                     persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
                     persona.intNumHermanos = this.txtNumHermanos.Text.Trim().Length > 0 ? (int.TryParse(this.txtNumHermanos.Text.Trim(), out i) ? int.Parse(this.txtNumHermanos.Text.Trim()) : 0) : 0;
                     persona.strEmail = this.txtEmail.Text.Trim();
-                    persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
+                    persona.strCP = this.txtCP.Text.Trim();
+                    // persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
                     persona.strRFC = this.txtRFC.Text.Trim();
                     String mensaje = String.Empty;
                     if (!this.validacion(persona, ref mensaje))
@@ -178,7 +181,8 @@ namespace UTTT.Ejemplo.Persona
                     persona.dtFechaNacimiento = this.dtFechaNacimiento.SelectedDate.Date;
                     persona.intNumHermanos = this.txtNumHermanos.Text.Trim().Length > 0 ? (int.TryParse(this.txtNumHermanos.Text.Trim(), out i) ? int.Parse(this.txtNumHermanos.Text.Trim()) : 0) : 0;
                     persona.strEmail = this.txtEmail.Text.Trim();
-                    persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
+                    persona.strCP = this.txtCP.Text.Trim();
+                    // persona.intCP = this.txtCP.Text.Trim().Length > 0 ? (int.TryParse(this.txtCP.Text.Trim(), out i) ? int.Parse(this.txtCP.Text.Trim()) : 0) : 0;
                     persona.strRFC = this.txtRFC.Text.Trim();
                     String mensaje = String.Empty;
                     if (!this.validacion(persona, ref mensaje))
@@ -315,6 +319,16 @@ namespace UTTT.Ejemplo.Persona
                 _mensaje = "La longitud de caracteres del campo nombre rebasa lo permitido.";
                 return false;
             }
+            if (_persona.strNombre.Length < 3)
+            {
+                _mensaje = "El campo nombre debe tener una longitud al menos de 3 caracteres.";
+                return false;
+            }
+            if (!this.onlyLetters.IsMatch(_persona.strNombre))
+            {
+                _mensaje = "El campo nombre debe contener solo letras.";
+                return false;
+            }
             if (_persona.strAPaterno.Equals(String.Empty))
             {
                 _mensaje = "El campo apellido paterno está vacío";
@@ -325,9 +339,24 @@ namespace UTTT.Ejemplo.Persona
                 _mensaje = "La longitud de caracteres del campo apellido paterno rebasa lo permitido.";
                 return false;
             }
+            if (_persona.strAPaterno.Length < 3)
+            {
+                _mensaje = "El campo apellido paterno debe tener una longitud al menos de 3 caracteres.";
+                return false;
+            }
+            if (!this.onlyLetters.IsMatch(_persona.strAPaterno))
+            {
+                _mensaje = "El campo apellido paterno debe contener solo letras.";
+                return false;
+            }
             if (_persona.strAMaterno.Length > 50)
             {
                 _mensaje = "La longitud de caracteres del campo apellido materno rebasa lo permitido.";
+                return false;
+            }
+            if (!this.onlyLetters.IsMatch(_persona.strAMaterno) && _persona.strAMaterno.Length > 0)
+            {
+                _mensaje = "El campo apellido materno debe contener solo letras.";
                 return false;
             }
             if (_persona.intNumHermanos.ToString().Length > 2)
@@ -345,7 +374,7 @@ namespace UTTT.Ejemplo.Persona
                 _mensaje = "El correo electrónico rebasa la longitud de caracteres permitida.";
                 return false;
             }
-            if (_persona.intCP.ToString().Length != 5)
+            if (_persona.strCP.Length != 5)
             {
                 _mensaje = "El código postal debe tener una longitud de 5 caracteres";
                 return false;
@@ -483,6 +512,21 @@ namespace UTTT.Ejemplo.Persona
         protected void CustomValidator2_ServerValidate(object source, ServerValidateEventArgs args)
         {
             args.IsValid = this.txtCP.Text.Trim().Length == 5;
+        }
+
+        protected void CustomValidator3_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = !this.txtNombre.Text.Contains("  ");
+        }
+
+        protected void CustomValidator4_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = !this.txtAPaterno.Text.Contains("  ");
+        }
+
+        protected void CustomValidator5_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = !this.txtAMaterno.Text.Contains("  ");
         }
     }
 }
