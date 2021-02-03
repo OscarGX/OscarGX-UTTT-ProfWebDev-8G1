@@ -30,7 +30,7 @@ namespace UTTT.Ejemplo.Persona
         public DateTime dt = DateTime.Now;
         private readonly Regex emailRegex = new Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
         private readonly Regex rfcRegex = new Regex(@"^([A-ZÑ\x26]{3,4}([0-9]{2})(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1]))([A-Z\d]{3})?$");
-        private readonly Regex onlyLetters = new Regex(@"^[a-zA-ZÀ-ÿ\u00f1\u00d1]+$");
+        private readonly Regex onlyLetters = new Regex(@"^[a-zA-ZÀ-ÿ\s\u00f1\u00d1]+$");
         
         #endregion
 
@@ -63,18 +63,27 @@ namespace UTTT.Ejemplo.Persona
                     }
                     List<CatSexo> lista = dcGlobal.GetTable<CatSexo>().ToList();
                     CatSexo catTemp = new CatSexo();
-                    catTemp.id = -1;
-                    catTemp.strValor = "Seleccionar";
-                    lista.Insert(0, catTemp);
-                    this.ddlSexo.DataTextField = "strValor";
-                    this.ddlSexo.DataValueField = "id";
-                    this.ddlSexo.DataSource = lista;
-                    this.ddlSexo.DataBind();
+                    //catTemp.id = -1;
+                    //catTemp.strValor = "Seleccionar";
+                    //lista.Insert(0, catTemp);
+                    //this.ddlSexo.DataTextField = "strValor";
+                    //this.ddlSexo.DataValueField = "id";
+                    //this.ddlSexo.DataSource = lista;
+                    //this.ddlSexo.DataBind();
 
                     this.ddlSexo.SelectedIndexChanged += new EventHandler(ddlSexo_SelectedIndexChanged);
                     this.ddlSexo.AutoPostBack = true;
                     if (this.idPersona == 0)
                     {
+                        //
+                        catTemp.id = -1;
+                        catTemp.strValor = "Seleccionar";
+                        lista.Insert(0, catTemp);
+                        this.ddlSexo.DataTextField = "strValor";
+                        this.ddlSexo.DataValueField = "id";
+                        this.ddlSexo.DataSource = lista;
+                        this.ddlSexo.DataBind();
+                        //
                         this.lblAccion.Text = "Agregar";
                         this.dtFechaUI.Value = null;
                         DateTime date = new DateTime(2000, 1, 9);
@@ -83,6 +92,15 @@ namespace UTTT.Ejemplo.Persona
                     }
                     else
                     {
+                        //
+                        catTemp.id = baseEntity.CatSexo.strValor == "Masculino" ? 1 : 2;
+                        catTemp.strValor = "Selecciona"; // baseEntity.CatSexo.strValor;
+                        lista.Insert(0, catTemp);
+                        this.ddlSexo.DataTextField = "strValor";
+                        this.ddlSexo.DataValueField = "id";
+                        this.ddlSexo.DataSource = lista;
+                        this.ddlSexo.DataBind();
+                        //
                         this.lblAccion.Text = "Editar";
                         this.txtNombre.Text = this.baseEntity.strNombre;
                         this.txtAPaterno.Text = this.baseEntity.strAPaterno;
@@ -352,6 +370,11 @@ namespace UTTT.Ejemplo.Persona
             if (_persona.strAMaterno.Length > 50)
             {
                 _mensaje = "La longitud de caracteres del campo apellido materno rebasa lo permitido.";
+                return false;
+            }
+            if (_persona.strAMaterno.Length > 0 && _persona.strAMaterno.Length < 3)
+            {
+                _mensaje = "Si el campo apellido materno va a ser llenado, debe contener 3 caracteres como mínimo.";
                 return false;
             }
             if (!this.onlyLetters.IsMatch(_persona.strAMaterno) && _persona.strAMaterno.Length > 0)

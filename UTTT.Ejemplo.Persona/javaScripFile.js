@@ -2,6 +2,7 @@
 const ddlSexo = document.querySelector('#ddlSexo');
 const txtNombre = document.querySelector('#txtNombre');
 const txtAPaterno = document.querySelector('#txtAPaterno');
+const txtAMaterno = document.querySelector('#txtAMaterno');
 const dtFechaNacimiento = document.querySelector('#dtFechaUI');
 const errores = document.querySelector('.alert-danger');
 const erroresParent = document.querySelector('#errores').firstElementChild;
@@ -161,11 +162,18 @@ const validateForm = () => {
     if (spaceRegex.test(txtAMaterno.value)) {
         erroresArray.push({
             field: 'Apellido Materno',
-            message: 'Hay demasiados espacios en el campo apellido materno'
+            message: 'Hay demasiados espacios en el campo apellido materno.'
         });
         return false;
     }
-    if (!onlyStringsRegex.test(txtAMaterno.value) && txtAMaterno.value.trim().length > 0) {
+    if (txtAMaterno.value.trim().length > 0 && txtAMaterno.value.trim().length < 3) {
+        erroresArray.push({
+            field: 'Apellido Materno',
+            message: 'Si el campo apellido materno va a ser llenado debe tener mínimo 3 caracteres.'
+        });
+        return false;
+    }
+    if (!onlyStringsRegex.test(txtAMaterno.value) && txtAMaterno.value.trim().length > 1) {
         erroresArray.push({
             field: 'Apellido Materno',
             message: 'Solo se aceptan letras en el campo apellido materno.'
