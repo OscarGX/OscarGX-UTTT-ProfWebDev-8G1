@@ -18,6 +18,14 @@
       <Association Name="Persona_Direccion" Member="Persona" ThisKey="idPersona" OtherKey="id" Type="Persona" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.EstadoCivil" Member="EstadoCivil">
+    <Type Name="EstadoCivil">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="strValor" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="strDesc" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Association Name="EstadoCivil_Persona" Member="Persona" ThisKey="id" OtherKey="idEstadoCivil" Type="Persona" />
+    </Type>
+  </Table>
   <Table Name="dbo.Persona" Member="Persona">
     <Type Name="Persona">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -31,7 +39,9 @@
       <Column Name="strEmail" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
       <Column Name="strCP" Type="System.String" DbType="VarChar(5)" CanBeNull="true" />
       <Column Name="strRFC" Type="System.String" DbType="VarChar(13)" CanBeNull="true" />
+      <Column Name="idEstadoCivil" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="Persona_Direccion" Member="Direccion" ThisKey="id" OtherKey="idPersona" Type="Direccion" />
+      <Association Name="EstadoCivil_Persona" Member="EstadoCivil" ThisKey="idEstadoCivil" OtherKey="id" Type="EstadoCivil" IsForeignKey="true" />
       <Association Name="CatSexo_Persona" Member="CatSexo" ThisKey="idCatSexo" OtherKey="id" Type="CatSexo" IsForeignKey="true" />
     </Type>
   </Table>

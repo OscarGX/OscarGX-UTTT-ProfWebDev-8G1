@@ -43,6 +43,16 @@ namespace UTTT.Ejemplo.Persona
                     this.ddlSexo.DataValueField = "id";
                     this.ddlSexo.DataSource = lista;
                     this.ddlSexo.DataBind();
+
+                    List<EstadoCivil> estadosCiviles = dcTemp.GetTable<EstadoCivil>().ToList();
+                    EstadoCivil estadoCivilTemp = new EstadoCivil();
+                    estadoCivilTemp.id = -1;
+                    estadoCivilTemp.strValor = "Todos";
+                    estadosCiviles.Insert(0, estadoCivilTemp);
+                    this.ddlEstadoCivil.DataTextField = "strValor";
+                    this.ddlEstadoCivil.DataValueField = "id";
+                    this.ddlEstadoCivil.DataSource = estadosCiviles;
+                    this.ddlEstadoCivil.DataBind();
                 }
             }
             catch (Exception _e)
@@ -87,6 +97,7 @@ namespace UTTT.Ejemplo.Persona
                 DataContext dcConsulta = new DcGeneralDataContext();
                 bool nombreBool = false;
                 bool sexoBool = false;
+                bool estadoCivilBool = false;
                 if (!this.txtNombre.Text.Equals(String.Empty))
                 {
                     nombreBool = true;
@@ -96,10 +107,16 @@ namespace UTTT.Ejemplo.Persona
                     sexoBool = true;
                 }
 
+                if (this.ddlEstadoCivil.Text != "-1")
+                {
+                    estadoCivilBool = true;
+                }
+
                 Expression<Func<UTTT.Ejemplo.Linq.Data.Entity.Persona, bool>> 
                     predicate =
                     (c =>
-                    ((sexoBool) ? c.idCatSexo == int.Parse(this.ddlSexo.Text) : true) &&             
+                    ((sexoBool) ? c.idCatSexo == int.Parse(this.ddlSexo.Text) : true) &&
+                    ((estadoCivilBool) ? c.idEstadoCivil == int.Parse(this.ddlEstadoCivil.Text) : true) &&
                     ((nombreBool) ? (((nombreBool) ? c.strNombre.Contains(this.txtNombre.Text.Trim()) : false)) : true)
                     );
 
@@ -199,5 +216,10 @@ namespace UTTT.Ejemplo.Persona
         }
 
         #endregion
+
+        protected void dgvPersonas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

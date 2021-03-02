@@ -3,7 +3,7 @@ const ddlSexo = document.querySelector('#ddlSexo');
 const txtNombre = document.querySelector('#txtNombre');
 const txtAPaterno = document.querySelector('#txtAPaterno');
 const txtAMaterno = document.querySelector('#txtAMaterno');
-const dtFechaNacimiento = document.querySelector('#dtFechaUI');
+// const dtFechaNacimiento = document.querySelector('#dtFechaUI');
 const errores = document.querySelector('.alert-danger');
 const erroresParent = document.querySelector('#errores').firstElementChild;
 const txtNumHermanos = document.querySelector('#txtNumHermanos');
@@ -45,6 +45,7 @@ function validate() {
         });
         errores.innerHTML = erroresStr;
         closeAlert();
+        window.scrollTo(0,0);
     }
     return false;
 }
@@ -52,11 +53,11 @@ function validate() {
 
 const validTemp = () => {
     const today = new Date();
-    const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
+    // const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
     // development
     // const personDate = new Date(`${strDate[1]}/${strDate[0]}/${strDate[2]}`);
     // end
-    const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
+    // const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
     const validEmail = emailRegex.test(txtEmail.value.toLowerCase());
     const validCP = /^([0-9])*$/.test(txtCP.value) && txtCP.value.length === 5;
     const validRFC = rfcRegex.test(txtRFC.value);
@@ -70,11 +71,11 @@ const validTemp = () => {
 const validateForm = () => {
     erroresArray = [];
     const today = new Date();
-    const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
+    // const strDate = dtFechaNacimiento.value.split(' ')[0].split('/');
     // dev enviroment
     // const personDate = new Date(`${strDate[1]}/${strDate[0]}/${strDate[2]}`);
     // end dev-e
-    const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
+    // const personDate = new Date(`${strDate[0]}/${strDate[1]}/${strDate[2]}`);
     if (Number.parseInt(ddlSexo.value) < 0) {
         erroresArray.push({
             field: 'Sexo',
@@ -180,13 +181,13 @@ const validateForm = () => {
         });
         return false;
     }
-    if (dtFechaNacimiento.value.length === 0) {
-        erroresArray.push({
-            field: 'Fecha de nacimiento',
-            message: 'La fecha de nacimiento es requerida.'
-        });
-        return false;
-    }
+    //if (dtFechaNacimiento.value.length === 0) {
+    //    erroresArray.push({
+    //        field: 'Fecha de nacimiento',
+    //        message: 'La fecha de nacimiento es requerida.'
+    //    });
+    //    return false;
+    //}
     if (!(/^([0-9])*$/.test(txtNumHermanos.value.length > 0 ? txtNumHermanos.value : 'abcd'))) {
         erroresArray.push({
             field: 'Número de Hermanos',
@@ -201,13 +202,13 @@ const validateForm = () => {
         });
         return false;
     }
-    if (today.getFullYear() - personDate.getFullYear() < 18) {
-        erroresArray.push({
-            field: 'Fecha de Nacimiento',
-            message: 'Debes er mayor de edad para acceder al sistema.'
-        });
-        return false;
-    }
+    //if (today.getFullYear() - personDate.getFullYear() < 18) {
+    //    erroresArray.push({
+    //        field: 'Fecha de Nacimiento',
+    //        message: 'Debes er mayor de edad para acceder al sistema.'
+    //    });
+    //    return false;
+    //}
     if (!emailRegex.test(txtEmail.value.toLowerCase())) {
         erroresArray.push({
             field: 'Email',
@@ -249,10 +250,10 @@ const validateForm = () => {
 txtClaveUnica.addEventListener('keyup', function () {
     // touched = true;
     if (/^([0-9])*$/.test(this.value) && this.value.length === 3) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -260,10 +261,10 @@ txtClaveUnica.addEventListener('keyup', function () {
 txtNombre.addEventListener('keyup', function () {
     // touched = true;
     if (this.value.length >= 3 && this.value.length <= 15) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -271,10 +272,10 @@ txtNombre.addEventListener('keyup', function () {
 txtAPaterno.addEventListener('keyup', function () {
     // touched = true;
     if (this.value.length >= 3 && this.value.length <= 15) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -282,10 +283,10 @@ txtAPaterno.addEventListener('keyup', function () {
 txtNumHermanos.addEventListener('keyup', function () {
     // touched = true;
     if (/^([0-9])*$/.test(this.value) && Number.parseInt(this.value) >=  0) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -293,10 +294,10 @@ txtNumHermanos.addEventListener('keyup', function () {
 txtEmail.addEventListener('keyup', function () {
     // touched = true;
     if (emailRegex.test(this.value.toLowerCase())) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -304,10 +305,10 @@ txtEmail.addEventListener('keyup', function () {
 txtCP.addEventListener('keyup', function () {
     // touched = true;
     if (/^([0-9])*$/.test(this.value) && this.value.length === 5) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });
@@ -316,10 +317,10 @@ txtRFC.addEventListener('keyup', function () {
     // touched = true;
     this.value = this.value.toUpperCase();
     if (rfcRegex.test(this.value)) {
-        this.className = '';
+        this.classList.remove('is-invalid');
         isValid = true;
     } else {
-        this.className = 'error';
+        this.classList.add('is-invalid');
         isValid = false;
     }
 });

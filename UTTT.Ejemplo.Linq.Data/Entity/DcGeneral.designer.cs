@@ -36,6 +36,9 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
     partial void InsertDireccion(Direccion instance);
     partial void UpdateDireccion(Direccion instance);
     partial void DeleteDireccion(Direccion instance);
+    partial void InsertEstadoCivil(EstadoCivil instance);
+    partial void UpdateEstadoCivil(EstadoCivil instance);
+    partial void DeleteEstadoCivil(EstadoCivil instance);
     partial void InsertPersona(Persona instance);
     partial void UpdatePersona(Persona instance);
     partial void DeletePersona(Persona instance);
@@ -84,6 +87,14 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 			get
 			{
 				return this.GetTable<Direccion>();
+			}
+		}
+		
+		public System.Data.Linq.Table<EstadoCivil> EstadoCivil
+		{
+			get
+			{
+				return this.GetTable<EstadoCivil>();
 			}
 		}
 		
@@ -433,6 +444,144 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EstadoCivil")]
+	public partial class EstadoCivil : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _strValor;
+		
+		private string _strDesc;
+		
+		private EntitySet<Persona> _Persona;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnstrValorChanging(string value);
+    partial void OnstrValorChanged();
+    partial void OnstrDescChanging(string value);
+    partial void OnstrDescChanged();
+    #endregion
+		
+		public EstadoCivil()
+		{
+			this._Persona = new EntitySet<Persona>(new Action<Persona>(this.attach_Persona), new Action<Persona>(this.detach_Persona));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strValor", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string strValor
+		{
+			get
+			{
+				return this._strValor;
+			}
+			set
+			{
+				if ((this._strValor != value))
+				{
+					this.OnstrValorChanging(value);
+					this.SendPropertyChanging();
+					this._strValor = value;
+					this.SendPropertyChanged("strValor");
+					this.OnstrValorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_strDesc", DbType="VarChar(100)")]
+		public string strDesc
+		{
+			get
+			{
+				return this._strDesc;
+			}
+			set
+			{
+				if ((this._strDesc != value))
+				{
+					this.OnstrDescChanging(value);
+					this.SendPropertyChanging();
+					this._strDesc = value;
+					this.SendPropertyChanged("strDesc");
+					this.OnstrDescChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EstadoCivil_Persona", Storage="_Persona", ThisKey="id", OtherKey="idEstadoCivil")]
+		public EntitySet<Persona> Persona
+		{
+			get
+			{
+				return this._Persona;
+			}
+			set
+			{
+				this._Persona.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Persona(Persona entity)
+		{
+			this.SendPropertyChanging();
+			entity.EstadoCivil = this;
+		}
+		
+		private void detach_Persona(Persona entity)
+		{
+			this.SendPropertyChanging();
+			entity.EstadoCivil = null;
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Persona")]
 	public partial class Persona : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -461,7 +610,11 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 		
 		private string _strRFC;
 		
+		private System.Nullable<int> _idEstadoCivil;
+		
 		private EntitySet<Direccion> _Direccion;
+		
+		private EntityRef<EstadoCivil> _EstadoCivil;
 		
 		private EntityRef<CatSexo> _CatSexo;
 		
@@ -491,11 +644,14 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
     partial void OnstrCPChanged();
     partial void OnstrRFCChanging(string value);
     partial void OnstrRFCChanged();
+    partial void OnidEstadoCivilChanging(System.Nullable<int> value);
+    partial void OnidEstadoCivilChanged();
     #endregion
 		
 		public Persona()
 		{
 			this._Direccion = new EntitySet<Direccion>(new Action<Direccion>(this.attach_Direccion), new Action<Direccion>(this.detach_Direccion));
+			this._EstadoCivil = default(EntityRef<EstadoCivil>);
 			this._CatSexo = default(EntityRef<CatSexo>);
 			OnCreated();
 		}
@@ -724,6 +880,30 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_idEstadoCivil", DbType="Int")]
+		public System.Nullable<int> idEstadoCivil
+		{
+			get
+			{
+				return this._idEstadoCivil;
+			}
+			set
+			{
+				if ((this._idEstadoCivil != value))
+				{
+					if (this._EstadoCivil.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnidEstadoCivilChanging(value);
+					this.SendPropertyChanging();
+					this._idEstadoCivil = value;
+					this.SendPropertyChanged("idEstadoCivil");
+					this.OnidEstadoCivilChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Persona_Direccion", Storage="_Direccion", ThisKey="id", OtherKey="idPersona")]
 		public EntitySet<Direccion> Direccion
 		{
@@ -734,6 +914,40 @@ namespace UTTT.Ejemplo.Linq.Data.Entity
 			set
 			{
 				this._Direccion.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EstadoCivil_Persona", Storage="_EstadoCivil", ThisKey="idEstadoCivil", OtherKey="id", IsForeignKey=true)]
+		public EstadoCivil EstadoCivil
+		{
+			get
+			{
+				return this._EstadoCivil.Entity;
+			}
+			set
+			{
+				EstadoCivil previousValue = this._EstadoCivil.Entity;
+				if (((previousValue != value) 
+							|| (this._EstadoCivil.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._EstadoCivil.Entity = null;
+						previousValue.Persona.Remove(this);
+					}
+					this._EstadoCivil.Entity = value;
+					if ((value != null))
+					{
+						value.Persona.Add(this);
+						this._idEstadoCivil = value.id;
+					}
+					else
+					{
+						this._idEstadoCivil = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("EstadoCivil");
+				}
 			}
 		}
 		
