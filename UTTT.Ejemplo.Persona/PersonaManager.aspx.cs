@@ -156,6 +156,7 @@ namespace UTTT.Ejemplo.Persona
                         if (baseEntity.EstadoCivil != null)
                         {
                             this.setItem(ref this.ddlEstadoCivil, baseEntity.EstadoCivil.strValor);
+                            
                         }
 
                     }
@@ -422,7 +423,7 @@ namespace UTTT.Ejemplo.Persona
                 _mensaje = "El campo apellido materno debe contener solo letras.";
                 return false;
             }
-            if (this.txtFechaNacimientoAjax.Text.Equals(String.Empty)) {
+            if (this.txtFechaNacimientoAjax.Text.Trim().Equals(String.Empty)) {
                 _mensaje = "La fecha de nacimiento es requerida.";
                 return false;
             }
@@ -435,6 +436,13 @@ namespace UTTT.Ejemplo.Persona
             if (time.Days < 6570)
             {
                 _mensaje = "Debes ser mayor de 18 años";
+                return false;
+            }
+            DateTime now = DateTime.Now;
+            DateTime oldxd = DateTime.Parse("01/01/1753");
+            if (_persona.dtFechaNacimiento >= now || _persona.dtFechaNacimiento <= oldxd)
+            {
+                _mensaje = "La fecha no es válida.";
                 return false;
             }
             if (_persona.intNumHermanos.ToString().Length > 2)

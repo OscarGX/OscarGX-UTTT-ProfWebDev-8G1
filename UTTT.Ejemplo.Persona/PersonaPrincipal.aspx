@@ -15,6 +15,10 @@
             table-layout: fixed; 
         }
 
+        .visible {
+            display: none;
+        }
+
         /*.table-responsive {
             display: table !important;
         }*/
@@ -60,8 +64,21 @@
         <div class="row">
             <div class="col-md-2">
                 <label class="form-label">Nombre</label>
+                <asp:ScriptManager runat="server"></asp:ScriptManager>
+                <asp:UpdatePanel ID="paneltxtName" runat="server">
+                    <ContentTemplate>
+                        <%--<asp:TextBox ID="txtNombre" runat="server"  
+                      CssClass="form-control"  AutoPostBack="true" OnTextChanged="onTxtNombreTextChange"></asp:TextBox>--%>
+                        <asp:Button style="display: none;" ID="btnTrick" runat="server" OnClick="btnTrick_Click"/>
+                    </ContentTemplate>
+                    <%--<Triggers>
+                        <asp:AsyncPostBackTrigger  ControlID="txtNombre" EventName="TextChanged"/>
+                    </Triggers>--%>
+                </asp:UpdatePanel>
                 <asp:TextBox ID="txtNombre" runat="server"  
-            ViewStateMode="Disabled"  CssClass="form-control"></asp:TextBox>
+                      CssClass="form-control"></asp:TextBox>
+                
+                
             </div>
             <div class="col-md-2">
                 <label class="form-label">Sexo</label>
@@ -78,12 +95,11 @@
         <asp:Button ID="btnAgregar" runat="server" Text="Agregar" 
             onclick="btnAgregar_Click" ViewStateMode="Disabled"  CssClass="btn btn-primary ms-3"/>
             </div>
-            <%--<div class="col-md-2">
-                <button class="btn btn-success">Olv we</button>
-            </div>--%>
+            
         </div>
     <div style="font-weight: bold" class="mt-4">
-        <h4 class="text-center">Detalle</h4>
+        <h4 class="text-center">Detalle
+        </h4>
     </div>
         <div>
         
@@ -92,6 +108,8 @@
             <div class="row mt-3">
             <div class="col-md-12 ">
             <div class="table-responsive">
+                <asp:UpdatePanel runat="server" ID="panelGrid">
+                    <ContentTemplate>
              <asp:GridView ID="dgvPersonas" runat="server" 
                 AllowPaging="True" AutoGenerateColumns="False" DataSourceID="DataSourcePersona" 
                 CellPadding="4" GridLines="None"
@@ -146,6 +164,8 @@
                 <SortedDescendingCellStyle BackColor="#D4DFE1" />
                 <SortedDescendingHeaderStyle BackColor="#15524A" />
             </asp:GridView>
+                        </ContentTemplate>
+                    </asp:UpdatePanel>
                 </div>
                 </div>
         </div>
@@ -164,5 +184,14 @@
             </div>
         </div>
     </div>--%>
+    <script type="text/javascript">
+        
+        document.querySelector('#txtNombre').addEventListener('keyup', function () {
+            const btnTrick = document.querySelector('#btnTrick');
+            console.log('olv');
+            // __doPostBack(this.name, 'OnKeyPress');
+            btnTrick.click();
+        });
+     </script>
 </body>
 </html>

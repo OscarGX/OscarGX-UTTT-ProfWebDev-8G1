@@ -30,6 +30,13 @@ namespace UTTT.Ejemplo.Persona
         {
             try
             {
+                // this.txtNombre.AutoPostBack = false;
+                var ctrlName = Request.Params[Page.postEventSourceID];
+                var args = Request.Params[Page.postEventArgumentID];
+                if (ctrlName == txtNombre.UniqueID && args == "OnKeyPress")
+                {
+                    this.onTxtNombreTextChange(sender, e);
+                }
                 Response.Buffer = true;
                 DataContext dcTemp = new DcGeneralDataContext();
                 if (!this.IsPostBack)
@@ -219,7 +226,33 @@ namespace UTTT.Ejemplo.Persona
 
         protected void dgvPersonas_SelectedIndexChanged(object sender, EventArgs e)
         {
+            
+        }
 
+        protected void onTxtNombreTextChange(object sender, EventArgs e)
+        {
+            try
+            {
+                this.DataSourcePersona.RaiseViewChanged();
+            }
+            catch (Exception _e)
+            {
+                this.showMessage("Ha ocurrido un problema al buscar");
+            }
+
+
+        }
+
+        protected void btnTrick_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.DataSourcePersona.RaiseViewChanged();
+            }
+            catch (Exception _e)
+            {
+                this.showMessage("Ha ocurrido un problema al buscar");
+            }
         }
     }
 }
