@@ -28,6 +28,12 @@ namespace UTTT.Ejemplo.Persona
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UsernameSession"] == null)
+            {
+                Response.Redirect("~/Login.aspx", false);
+                return;
+            }
+            this.lblUser.Text = Session["UsernameSession"] as string;
             try
             {
                 // this.txtNombre.AutoPostBack = false;
@@ -99,6 +105,11 @@ namespace UTTT.Ejemplo.Persona
 
         protected void DataSourcePersona_Selecting(object sender, LinqDataSourceSelectEventArgs e)
         {
+            if (Session["UsernameSession"] == null)
+            {
+                Response.Redirect("~/Login.aspx", false);
+                return;
+            }
             try
             {
                 DataContext dcConsulta = new DcGeneralDataContext();

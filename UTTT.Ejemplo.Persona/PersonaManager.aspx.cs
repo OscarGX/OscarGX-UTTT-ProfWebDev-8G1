@@ -39,6 +39,12 @@ namespace UTTT.Ejemplo.Persona
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["UsernameSession"] == null)
+            {
+                Response.Redirect("~/Login.aspx", false);
+                return;
+            }
+            this.lblUser.Text = Session["UsernameSession"] as string;
             try
             {
                 this.Response.Buffer = true;
@@ -220,6 +226,12 @@ namespace UTTT.Ejemplo.Persona
                         this.lblErrorM3V.Visible = true;
                         return;
                     }
+                    if (!this.sqlQueryValidation(persona, ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
                     dcGuardar.GetTable<UTTT.Ejemplo.Linq.Data.Entity.Persona>().InsertOnSubmit(persona);
                     dcGuardar.SubmitChanges();
                     this.showMessage("El registro se agrego correctamente.");
@@ -257,6 +269,12 @@ namespace UTTT.Ejemplo.Persona
                         return;
                     }
                     if (!this.htmlInjectionValida(ref mensaje))
+                    {
+                        this.lblErrorM3V.Text = mensaje;
+                        this.lblErrorM3V.Visible = true;
+                        return;
+                    }
+                    if (!this.sqlQueryValidationEditar(persona, ref mensaje))
                     {
                         this.lblErrorM3V.Text = mensaje;
                         this.lblErrorM3V.Visible = true;
@@ -578,6 +596,26 @@ namespace UTTT.Ejemplo.Persona
         }
 
         #endregion
+        public bool sqlQueryValidation(Linq.Data.Entity.Persona _persona, ref String mensaje)
+        {
+            var persona = dcGlobal.GetTable<Linq.Data.Entity.Persona>().FirstOrDefault(p => p.strEmail == _persona.strEmail);
+            if (persona != null)
+            {
+                mensaje = "El correo ingresado ya está en uso, por favor intente con uno diferente.";
+                return false;
+            }
+            return true;
+        }
+        public bool sqlQueryValidationEditar(Linq.Data.Entity.Persona persona, ref String mensaje)
+        {
+            var personCount = dcGlobal.GetTable<Linq.Data.Entity.Persona>().Where(u => u.strEmail == persona.strEmail && u.id != persona.id).Count();
+            if (personCount > 0)
+            {
+                mensaje = "El correo ingresado ya está en uso, por favor intente con uno diferente.";
+                return false;
+            }
+            return true;
+        }
         protected void dtFechaNacimiento_SelectionChanged(object sender, EventArgs e)
         {
             this.dtFechaUI.Value = this.dtFechaNacimiento.SelectedDate.ToString();

@@ -26,6 +26,14 @@
       <Association Name="EstadoCivil_Persona" Member="Persona" ThisKey="id" OtherKey="idEstadoCivil" Type="Persona" />
     </Type>
   </Table>
+  <Table Name="dbo.EstadoUsuarios" Member="EstadoUsuarios">
+    <Type Name="EstadoUsuarios">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="strValor" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="strDesc" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Association Name="EstadoUsuarios_Usuarios" Member="Usuarios" ThisKey="id" OtherKey="idEstado" Type="Usuarios" />
+    </Type>
+  </Table>
   <Table Name="dbo.Persona" Member="Persona">
     <Type Name="Persona">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -41,8 +49,22 @@
       <Column Name="strRFC" Type="System.String" DbType="VarChar(13)" CanBeNull="true" />
       <Column Name="idEstadoCivil" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="Persona_Direccion" Member="Direccion" ThisKey="id" OtherKey="idPersona" Type="Direccion" />
+      <Association Name="Persona_Usuarios" Member="Usuarios" ThisKey="id" OtherKey="idComPersona" Type="Usuarios" />
       <Association Name="EstadoCivil_Persona" Member="EstadoCivil" ThisKey="idEstadoCivil" OtherKey="id" Type="EstadoCivil" IsForeignKey="true" />
       <Association Name="CatSexo_Persona" Member="CatSexo" ThisKey="idCatSexo" OtherKey="id" Type="CatSexo" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Usuarios" Member="Usuarios">
+    <Type Name="Usuarios">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="idComPersona" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="strUsername" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="strPassword" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="idEstado" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="dtFechaIngreso" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="strRecoveryToken" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Association Name="EstadoUsuarios_Usuarios" Member="EstadoUsuarios" ThisKey="idEstado" OtherKey="id" Type="EstadoUsuarios" IsForeignKey="true" />
+      <Association Name="Persona_Usuarios" Member="Persona" ThisKey="idComPersona" OtherKey="id" Type="Persona" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

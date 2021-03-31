@@ -34,6 +34,33 @@ namespace UTTT.Ejemplo.Persona.Control.Ctrl
             }
         }
 
+        public bool recoveryPasswordEmail(String email, String name, String token)
+        {
+            try
+            {
+                MailMessage mailMessage = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient();
+                mailMessage.From = new MailAddress("18300181@uttt.edu.mx");
+                mailMessage.To.Add(new MailAddress(email));
+                mailMessage.Subject = "Recuperar contraseña";
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = this.createRecoveryMessage(name, token);
+                smtpClient.Port = 587;
+                smtpClient.Host = "smtp.gmail.com";
+                smtpClient.EnableSsl = true;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential("your-email-address-bro", "your-password");
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Send(mailMessage);
+                return true;
+            }
+            catch (Exception _e)
+            {
+                Console.WriteLine(_e.Message);
+                return false;
+            }
+        }
+
 
         private String createMessage(String message, String type, String file, String scope)
         {
@@ -43,6 +70,17 @@ namespace UTTT.Ejemplo.Persona.Control.Ctrl
                 "<strong>Archivo: </strong>"+file+"<br><strong>Ámbito: </strong>"+scope+"<br>" +
                 "<strong>Fecha y Hora: </strong>"+now+"<br></p>";
             // String htmlBodyMail = String.Format(body, message, type, file, scope, now);
+            return body;
+        }
+
+        private String createRecoveryMessage(String name, String token)
+        {
+            // String devUrl = "http://localhost:36683/RecuperarContraseña.aspx?token="+token;
+            String prodUrl = "https://uttt-oscar-pwd-8igdsg1.azurewebsites.net/RecuperarContraseña.aspx?token="+token;
+            String body = "<h2>Hola " + name + "</h2><br>" +
+                "<p>Te enviamos este correo para que puedas recuperar tu contraseña," +
+                " accede al siguiente link.</p>" +
+                "<a href='"+ prodUrl +"'>Recuperar contraseña</a>";
             return body;
         }
     }
